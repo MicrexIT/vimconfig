@@ -40,18 +40,6 @@ set backspace=indent,eol,start
 "        stop once at the start of insert.
 
 
-" go-vim plugin specific commands
-" Also run `goimports` on your current file on every save
-" Might be be slow on large codebases, if so, just comment it out
-let g:go_fmt_command = "goimports"
-
-" Status line types/signatures.
-let g:go_auto_type_info = 1
-
-"au filetype go inoremap <buffer> . .<C-x><C-o>
-
-" If you want to disable gofmt on save
-" let g:go_fmt_autosave = 0
 
 
 " NERDTree plugin specific commands
@@ -106,3 +94,25 @@ if $TERM_PROGRAM =~ "iTerm"
     let &t_SI = "\<Esc>]50;CursorShape=1\x7" " Vertical bar in insert mode
     let &t_EI = "\<Esc>]50;CursorShape=0\x7" " Block in normal mode
 endif
+
+" golang configuration
+map <C-n> :cnext<CR>
+map <C-m> :cprevious<CR>
+nnoremap <leader>a :cclose<CR>
+let g:go_list_type = "quickfix"
+autocmd FileType go nmap <leader>b  <Plug>(go-build)
+autocmd FileType go nmap <leader>r  <Plug>(go-run)
+autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
+
+" go-vim plugin specific commands
+" Also run `goimports` on your current file on every save
+" Might be be slow on large codebases, if so, just comment it out
+let g:go_fmt_command = "goimports"
+
+" Status line types/signatures.
+let g:go_auto_type_info = 1
+
+"au filetype go inoremap <buffer> . .<C-x><C-o>
+
+" If you want to disable gofmt on save
+" let g:go_fmt_autosave = 0
