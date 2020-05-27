@@ -1,145 +1,37 @@
-syntax on
-" colo pablo
+set runtimepath^=~/.vim runtimepath+=~/.vim/after
+let &packpath = &runtimepath
+source ~.vimrc
+scriptencoding utf-8
+source ~/.config/nvim/plugins.vim
 
-" Flash screen instead of beep sound
-set visualbell
+" ============================================================================ "
+" ===                           EDITING OPTIONS                            === "
+" ============================================================================ "
 
-" Change how vim represents characters on the screen
-set encoding=utf-8
+" Remap leader key to ,
+let g:mapleader=' '
 
-" Set the encoding of files written
-set fileencoding=utf-8
+" Disable line numbers
+set nonumber
 
+" Don't show last command
+set noshowcmd
 
-autocmd Filetype python setlocal expandtab tabstop=4 shiftwidth=4 softtabstop=4
-autocmd Filetype go setlocal tabstop=4 shiftwidth=4 softtabstop=4
-" ts - show existing tab with 4 spaces width
-" sw - when indenting with '>', use 4 spaces width
-" sts - control <tab> and <bs> keys to match tabstop
-
-" Control all other files
-set shiftwidth=4
-
-set undofile " Maintain undo history between sessions
-set undodir=~/.vim/undodir
-
-" Hardcore mode, disable arrow keys.
-"noremap <Up> <NOP>
-"noremap <Down> <NOP>
-"noremap <Left> <NOP>
-"noremap <Right> <NOP>
-
-filetype plugin indent on
-
-" Allow backspace to delete indentation and inserted text
-" i.e. how it works in most programs
-set backspace=indent,eol,start
-" indent  allow backspacing over autoindent
-" eol     allow backspacing over line breaks (join lines)
-" start   allow backspacing over the start of insert; CTRL-W and CTRL-U
-"        stop once at the start of insert.
-
-
-
-
-" NERDTree plugin specific commands
-:nnoremap <C-g> :NERDTreeToggle<CR>
-"autocmd vimenter * NERDTree
-
-
-" air-line plugin specific commands
-let g:airline_powerline_fonts = 1
-
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-
-" unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_left_sep = '▶'
-let g:airline_right_sep = '«'
-let g:airline_right_sep = '◀'
-let g:airline_symbols.linenr = '␊'
-let g:airline_symbols.linenr = '␤'
-let g:airline_symbols.linenr = '¶'
-let g:airline_symbols.branch = '⎇'
-let g:airline_symbols.paste = 'ρ'
-let g:airline_symbols.paste = 'Þ'
-let g:airline_symbols.paste = '∥'
-let g:airline_symbols.whitespace = 'Ξ'
-
-" airline symbols
-let g:airline_left_sep = ''
-let g:airline_left_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_right_alt_sep = ''
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = ''
-
-inoremap jk <ESC>
-
-let mapleader = " "
-
-filetype plugin indent on
-set encoding=utf-8
-"set clipboard=unnamedplus
-
-" GRUVBOX colorscheme
-autocmd vimenter * colorscheme gruvbox
-
-" Change cursor shape between insert and normal mode in iTerm2.app
-if $TERM_PROGRAM =~ "iTerm"
-    let &t_SI = "\<Esc>]50;CursorShape=1\x7" " Vertical bar in insert mode
-    let &t_EI = "\<Esc>]50;CursorShape=0\x7" " Block in normal mode
-endif
-
-" golang configuration
-map <C-n> :cnext<CR>
-map <C-m> :cprevious<CR>
-nnoremap <leader>a :cclose<CR>
-let g:go_list_type = "quickfix"
-autocmd FileType go nmap <leader>b <Plug>(go-build)
-autocmd FileType go nmap <leader>r <Plug>(go-run)
-autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
-
-" go-vim plugin specific commands
-" Also run `goimports` on your current file on every save
-" Might be be slow on large codebases, if so, just comment it out
-let g:go_fmt_command = "goimports"
-
-" Status line types/signatures.
-let g:go_auto_type_info = 1
-
-"au filetype go inoremap <buffer> . .<C-x><C-o>
-
-" If you want to disable gofmt on save
-" let g:go_fmt_autosave = 0
-
-set completeopt+=menuone
-set completeopt+=noselect
-set shortmess+=c   " Shut off completion messages
-set belloff+=ctrlg " If Vim beeps during completion
-let g:mucomplete#enable_auto_at_startup = 1
-"let g:mucomplete#completion_delay = 1
-
-
-" syntastic -> shows unusued vars
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-
-let g:syntastic_go_checkers = ['<checker-name>']
 " Yank and paste with the system clipboard
 set clipboard=unnamed
 
 " Hides buffers instead of closing them
 set hidden
+
+" === TAB/Space settings === "
+" Insert spaces when TAB is pressed.
+set expandtab
+
+" Change number of spaces that a <Tab> counts for during editing ops
+set softtabstop=4
+
+" Indentation amount for < and > commands.
+set shiftwidth=4
 
 " do not wrap long lines by default
 set nowrap
@@ -164,34 +56,74 @@ set shortmess+=c
 " ===                           PLUGIN SETUP                               === "
 " ============================================================================ "
 
-set runtimepath+=~/work/denite.nvim/
-set runtimepath+=~/work/nvim-yarp/
-set runtimepath+=~/work/vim-hug-neovim-rpc/
+" Wrap in try/catch to avoid errors on initial install before plugin is available
+try
+" === Denite setup ==="
+" Use ripgrep for searching current directory for files
+" By default, ripgrep will respect rules in .gitignore
+"   --files: Print each file that would be searched (but don't search)
+"   --glob:  Include or exclues files for searching that match the given glob
+"            (aka ignore .git files)
+"
+call denite#custom#var('file/rec', 'command', ['rg', '--files', '--glob', '!.git'])
 
-filetype plugin indent on
-syntax enable
+" Use ripgrep in place of "grep"
+call denite#custom#var('grep', 'command', ['rg'])
 
+" Custom options for ripgrep
+"   --vimgrep:  Show results with every match on it's own line
+"   --hidden:   Search hidden directories and files
+"   --heading:  Show the file name above clusters of matches from each file
+"   --S:        Search case insensitively if the pattern is all lowercase
+call denite#custom#var('grep', 'default_opts', ['--hidden', '--vimgrep', '--heading', '-S'])
 
-" call denite#custom#option('default', {'start_filter' : 1})
+" Recommended defaults for ripgrep via Denite docs
+call denite#custom#var('grep', 'recursive_opts', [])
+call denite#custom#var('grep', 'pattern_opt', ['--regexp'])
+call denite#custom#var('grep', 'separator', ['--'])
+call denite#custom#var('grep', 'final_opts', [])
 
-autocmd FileType denite call s:denite_my_settings()
-function! s:denite_my_settings() abort
-  nnoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
-  nnoremap <silent><buffer><expr> d
-  \ denite#do_map('do_action', 'delete')
-  nnoremap <silent><buffer><expr> p
-  \ denite#do_map('do_action', 'preview')
-  nnoremap <silent><buffer><expr> q
-  \ denite#do_map('quit')
-  nnoremap <silent><buffer><expr> i
-  \ denite#do_map('open_filter_buffer')
-  nnoremap <silent><buffer><expr> <Space>
-  \ denite#do_map('toggle_select').'j'
+" Remove date from buffer list
+call denite#custom#var('buffer', 'date_format', '')
+
+" Custom options for Denite
+"   auto_resize             - Auto resize the Denite window height automatically.
+"   prompt                  - Customize denite prompt
+"   direction               - Specify Denite window direction as directly below current pane
+"   winminheight            - Specify min height for Denite window
+"   highlight_mode_insert   - Specify h1-CursorLine in insert mode
+"   prompt_highlight        - Specify color of prompt
+"   highlight_matched_char  - Matched characters highlight
+"   highlight_matched_range - matched range highlight
+let s:denite_options = {'default' : {
+\ 'split': 'floating',
+\ 'start_filter': 1,
+\ 'auto_resize': 1,
+\ 'source_names': 'short',
+\ 'prompt': 'λ ',
+\ 'highlight_matched_char': 'QuickFixLine',
+\ 'highlight_matched_range': 'Visual',
+\ 'highlight_window_background': 'Visual',
+\ 'highlight_filter_background': 'DiffAdd',
+\ 'winrow': 1,
+\ 'vertical_preview': 1
+\ }}
+
+" Loop through denite options and enable them
+function! s:profile(opts) abort
+  for l:fname in keys(a:opts)
+    for l:dopt in keys(a:opts[l:fname])
+      call denite#custom#option(l:fname, l:dopt, a:opts[l:fname][l:dopt])
+    endfor
+  endfor
 endfunction
 
-"
-"" === Coc.nvim === "
+call s:profile(s:denite_options)
+catch
+  echo 'Denite not installed. It should work after running :PlugInstall'
+endtry
+
+" === Coc.nvim === "
 " use <tab> for trigger completion and navigate to next complete item
 function! s:check_back_space() abort
   let col = col('.') - 1
@@ -213,10 +145,10 @@ smap <C-k> <Plug>(neosnippet_expand_or_jump)
 xmap <C-k> <Plug>(neosnippet_expand_target)
 
 " Load custom snippets from snippets folder
-"let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
+let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 
 " Hide conceal markers
-"let g:neosnippet#enable_conceal_markers = 0
+let g:neosnippet#enable_conceal_markers = 0
 
 " === NERDTree === "
 " Show hidden files/directories
@@ -225,14 +157,54 @@ let g:NERDTreeShowHidden = 1
 " Remove bookmarks and help text from NERDTree
 let g:NERDTreeMinimalUI = 1
 
-" Custom icons for expandable/expanded directories
-let g:NERDTreeDirArrowExpandable = '⬏'
-let g:NERDTreeDirArrowCollapsible = '⬎'
 
 " Hide certain files and directories from NERDTree
 let g:NERDTreeIgnore = ['^\.DS_Store$', '^tags$', '\.git$[[dir]]', '\.idea$[[dir]]', '\.sass-cache$']
 
 " Wrap in try/catch to avoid errors on initial install before plugin is available
+try
+
+" === Vim airline ==== "
+" Enable extensions
+let g:airline_extensions = ['branch', 'hunks', 'coc']
+
+" Update section z to just have line number
+let g:airline_section_z = airline#section#create(['linenr'])
+
+" Do not draw separators for empty sections (only for the active window) >
+let g:airline_skip_empty_sections = 1
+
+" Smartly uniquify buffers names with similar filename, suppressing common parts of paths.
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+" Custom setup that removes filetype/whitespace from default vim airline bar
+let g:airline#extensions#default#layout = [['a', 'b', 'c'], ['x', 'z', 'warning', 'error']]
+
+" Customize vim airline per filetype
+" 'nerdtree'  - Hide nerdtree status line
+" 'list'      - Only show file type plus current line number out of total
+let g:airline_filetype_overrides = {
+  \ 'nerdtree': [ get(g:, 'NERDTreeStatusline', ''), '' ],
+  \ 'list': [ '%y', '%l/%L'],
+  \ }
+
+" Enable powerline fonts
+let g:airline_powerline_fonts = 1
+
+" Enable caching of syntax highlighting groups
+let g:airline_highlighting_cache = 1
+
+" Define custom airline symbols
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+" Don't show git changes to current file in airline
+let g:airline#extensions#hunks#enabled=0
+
+catch
+  echo 'Airline not installed. It should work after running :PlugInstall'
+endtry
 
 " === echodoc === "
 " Enable echodoc on startup
@@ -257,7 +229,10 @@ let g:signify_sign_delete = '-'
 " ============================================================================ "
 
 " Enable true color support
-set termguicolors
+" set termguicolors
+
+" Vim airline theme
+" let g:airline_theme='space'
 
 " Set preview window to appear at bottom
 set splitbelow
@@ -265,6 +240,8 @@ set splitbelow
 " Don't dispay mode in command line (airilne already shows it)
 set noshowmode
 
+" Set floating window to be slightly transparent
+set winbl=10
 
 " ============================================================================ "
 " ===                      CUSTOM COLORSCHEME CHANGES                      === "
@@ -310,7 +287,14 @@ function! s:custom_jarvis_colors()
   hi SignifySignChange guifg=#c594c5
 endfunction
 
+autocmd! ColorScheme * call TrailingSpaceHighlights()
+autocmd! ColorScheme OceanicNext call s:custom_jarvis_colors()
 
+" Call method on window enter
+augroup WindowManagement
+  autocmd!
+  autocmd WinEnter * call Handle_Win_Enter()
+augroup END
 
 " Change highlight group of preview window when open
 function! Handle_Win_Enter()
@@ -319,6 +303,13 @@ function! Handle_Win_Enter()
   endif
 endfunction
 
+" Editor theme
+set background=dark
+try
+  colorscheme OceanicNext
+catch
+  colorscheme slate
+endtry
 " ============================================================================ "
 " ===                             KEY MAPPINGS                             === "
 " ============================================================================ "
@@ -397,6 +388,10 @@ endfunction
 nmap <leader>n :NERDTreeToggle<CR>
 nmap <leader>f :NERDTreeFind<CR>
 
+"   <Space> - PageDown
+"   -       - PageUp
+noremap <Space> <PageDown>
+noremap - <PageUp>
 
 " Quick window switching
 nmap <C-h> <C-w>h
@@ -444,6 +439,8 @@ vnoremap <leader>p "_dP
 " ===                                 MISC.                                === "
 " ============================================================================ "
 
+" Automaticaly close nvim if NERDTree is only thing left open
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 " === Search === "
 " ignore case when searching
@@ -458,3 +455,20 @@ set autoread
 " Enable line numbers
 set number
 
+" Enable spellcheck for markdown files
+autocmd BufRead,BufNewFile *.md setlocal spell
+
+" Set backups
+if has('persistent_undo')
+  set undofile
+  set undolevels=3000
+  set undoreload=10000
+endif
+set backupdir=~/.local/share/nvim/backup " Don't put backups in current dir
+set backup
+set noswapfile
+
+" Reload icons after init source
+if exists('g:loaded_webdevicons')
+  call webdevicons#refresh()
+endif
