@@ -31,8 +31,7 @@ set undodir=~/.vim/undodir
 
 filetype plugin indent on
 
-" Allow backspace to delete indentation and inserted text
-" i.e. how it works in most programs
+" Allow backspace to delete indentation and inserted text " i.e. how it works in most programs
 set backspace=indent,eol,start
 " indent  allow backspacing over autoindent
 " eol     allow backspacing over line breaks (join lines)
@@ -138,13 +137,6 @@ let g:syntastic_go_checkers = ['<checker-name>']
 " Yank and paste with the system clipboard
 set clipboard=unnamed
 
-" Hides buffers instead of closing them
-set hidden
-
-" do not wrap long lines by default
-set nowrap
-
-" Don't highlight current cursor line
 set nocursorline
 
 " Disable line/column number in status line
@@ -257,7 +249,10 @@ let g:signify_sign_delete = '-'
 " ============================================================================ "
 
 " Enable true color support
-set termguicolors
+"set termguicolors
+
+" Vim airline theme
+let g:airline_theme='space'
 
 " Set preview window to appear at bottom
 set splitbelow
@@ -347,9 +342,6 @@ function! s:denite_filter_my_settings() abort
   inoremap <silent><buffer><expr> <Esc>
   \ denite#do_map('quit')
   nnoremap <silent><buffer><expr> <Esc>
-  \ denite#do_map('quit')
-  inoremap <silent><buffer><expr> <CR>
-  \ denite#do_map('do_action')
   inoremap <silent><buffer><expr> <C-t>
   \ denite#do_map('do_action', 'tabopen')
   inoremap <silent><buffer><expr> <C-v>
@@ -448,6 +440,9 @@ vnoremap <leader>p "_dP
 " === Search === "
 " ignore case when searching
 set ignorecase
+
+" if the search string has an upper case letter in it, the search will be case sensitive
+set smartcase
 
 " if the search string has an upper case letter in it, the search will be case sensitive
 set smartcase
